@@ -1,4 +1,5 @@
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -9,6 +10,7 @@ public class ServerTranslationApplication {
 
 		String ss = "[ServerSocket] ";
 		ServerSocket serverSocket = null;
+		Translator translation = new Translator();
 
 		try {
 			
@@ -29,6 +31,18 @@ public class ServerTranslationApplication {
 				System.out.println(ss + "Requested text at index " + textIndex + ": " + text);
 				System.out.println(ss + "Requested textLanguage: " + textLanguage);
 
+				
+				//Process data received from server client
+				String translatedText = translation.getResult(textIndex, textLanguage);
+				System.out.println(ss + "TranslatedText Text: " + translatedText);
+				
+				
+				// Sends/return data to the other server (client)
+				DataOutputStream outputStream = new DataOutputStream(clientSocket.getOutputStream()); // Create stream to write data on the network
+				outputStream.writeUTF(translatedText); // Send current data back to the client
+				
+				clientSocket.close(); // Close the client socket
+				System.out.println(ss + "clientSocket connection closed\n");
 			}
 
 		} catch (IOException ioe) {
