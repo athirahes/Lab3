@@ -83,6 +83,13 @@ public class ClientTranslationFrame extends JFrame {
 				language = String.valueOf(jcLang.getSelectedItem());
 				System.out.println("\n[Frame] Text (" + textIndex + "):" + text + " to " + language);
 
+				try {
+					new ClientTranslationApplication().SendText(textIndex, text, language);
+
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				
 			}
 		});
 		return pnl1;

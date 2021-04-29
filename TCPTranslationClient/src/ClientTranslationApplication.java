@@ -1,32 +1,41 @@
-import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class ClientTranslationApplication {
 
-	public static void main(String[] args) {
+	static ClientTranslationFrame clientTranslationFrame = new ClientTranslationFrame();
+
+	public void SendText(int textIndex, String sentence, String language) throws InterruptedException {
 
 		try {
-			// Connect to the server at localhost, port 4228
-			Socket socket = new Socket(InetAddress.getLocalHost(), 4228);
 
-			// Create input stream
-			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			// Receive data from the server socket
+			Socket tsocket = new Socket(InetAddress.getLocalHost(), 4228); // Connect to the server @ localhost, port 4228
 
-			// Read from the network and display the current date
-			String text = bufferedReader.readLine();
-			System.out.println(text);
+			// Sends data to the server
+			DataOutputStream outputStream = new DataOutputStream(tsocket.getOutputStream());	// Create stream to write data on the network
 
-			// Close everything
-			bufferedReader.close();
-			socket.close();
+			// Receive data from client frame & Send to the server
+			outputStream.write(textIndex);
+			outputStream.writeUTF(sentence);
+			outputStream.writeUTF(language);
+			// outputStream.flush();
 
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
+			System.out.println("[Client] textIndex: " + textIndex);
+			System.out.println("[Client] language: " + language);
+
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+	}
 
+	public static void main(String[] args) throws UnknownHostException, IOException {
+
+		// Launch client-side frame
+		clientTranslationFrame.setVisible(true);
 	}
 
 }
